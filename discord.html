@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html data-theme="blurple">
+<head>
+<meta charset="UTF-8">
+<title>Discord Panel</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+  /* ── Theme variables (same set as tab.html) ───────────────────────────── */
+  :root,
+  [data-theme="blurple"] {
+    --bg-panel:    #0e0f16;
+    --bg-header-1: #0a0b10;
+    --bg-header-2: rgba(10,11,16,0.85);
+    --accent-1:    rgba(88,101,242,0.85);
+    --accent-2:    rgba(123,79,245,0.65);
+    --accent-3:    rgba(148,100,255,0.85);
+    --border-glow: rgba(88,101,242,0.20);
+    --text-primary: rgba(255,255,255,0.92);
+    --text-muted:   rgba(180,185,220,0.55);
+    --mute-fg:      #ed6467;
+    --mute-bg:      rgba(237,66,69,0.20);
+  }
+  [data-theme="midnight"] {
+    --bg-panel:    #050811;
+    --bg-header-1: #03060d;
+    --bg-header-2: rgba(3,6,13,0.85);
+    --accent-1:    rgba(59,130,246,0.85);
+    --accent-2:    rgba(29,78,216,0.65);
+    --accent-3:    rgba(56,189,248,0.85);
+    --border-glow: rgba(59,130,246,0.20);
+    --text-primary: rgba(232,238,255,0.92);
+    --text-muted:   rgba(170,190,230,0.55);
+    --mute-fg:      #f43f5e;
+    --mute-bg:      rgba(244,63,94,0.20);
+  }
+  [data-theme="aurora"] {
+    --bg-panel:    #0a0518;
+    --bg-header-1: #060211;
+    --bg-header-2: rgba(6,2,17,0.85);
+    --accent-1:    rgba(34,211,238,0.85);
+    --accent-2:    rgba(236,72,153,0.7);
+    --accent-3:    rgba(244,114,182,0.85);
+    --border-glow: rgba(236,72,153,0.20);
+    --text-primary: rgba(248,235,255,0.93);
+    --text-muted:   rgba(210,195,235,0.55);
+    --mute-fg:      #f472b6;
+    --mute-bg:      rgba(244,114,182,0.20);
+  }
+  [data-theme="ember"] {
+    --bg-panel:    #1a0804;
+    --bg-header-1: #110402;
+    --bg-header-2: rgba(17,4,2,0.85);
+    --accent-1:    rgba(249,115,22,0.85);
+    --accent-2:    rgba(250,204,21,0.65);
+    --accent-3:    rgba(252,165,3,0.85);
+    --border-glow: rgba(249,115,22,0.22);
+    --text-primary: rgba(255,238,215,0.93);
+    --text-muted:   rgba(230,195,160,0.55);
+    --mute-fg:      #ef4444;
+    --mute-bg:      rgba(239,68,68,0.20);
+  }
+  [data-theme="forest"] {
+    --bg-panel:    #050f08;
+    --bg-header-1: #030a05;
+    --bg-header-2: rgba(3,10,5,0.85);
+    --accent-1:    rgba(16,185,129,0.85);
+    --accent-2:    rgba(132,204,22,0.65);
+    --accent-3:    rgba(52,211,153,0.85);
+    --border-glow: rgba(16,185,129,0.22);
+    --text-primary: rgba(232,253,238,0.93);
+    --text-muted:   rgba(180,215,190,0.55);
+    --mute-fg:      #f87171;
+    --mute-bg:      rgba(248,113,113,0.20);
+  }
+  [data-theme="sakura"] {
+    --bg-panel:    #1a0710;
+    --bg-header-1: #110308;
+    --bg-header-2: rgba(17,3,8,0.85);
+    --accent-1:    rgba(244,114,182,0.85);
+    --accent-2:    rgba(251,146,60,0.65);
+    --accent-3:    rgba(251,113,133,0.85);
+    --border-glow: rgba(244,114,182,0.22);
+    --text-primary: rgba(255,232,242,0.94);
+    --text-muted:   rgba(230,195,215,0.55);
+    --mute-fg:      #ef4444;
+    --mute-bg:      rgba(239,68,68,0.20);
+  }
+  [data-theme="cyber"] {
+    --bg-panel:    #010805;
+    --bg-header-1: #000402;
+    --bg-header-2: rgba(0,4,2,0.88);
+    --accent-1:    rgba(34,255,136,0.85);
+    --accent-2:    rgba(0,255,213,0.65);
+    --accent-3:    rgba(34,255,136,0.85);
+    --border-glow: rgba(34,255,136,0.22);
+    --text-primary: rgba(225,255,235,0.94);
+    --text-muted:   rgba(170,225,195,0.55);
+    --mute-fg:      #ff3060;
+    --mute-bg:      rgba(255,48,96,0.22);
+  }
+  [data-theme="mono"] {
+    --bg-panel:    #131316;
+    --bg-header-1: #0a0a0c;
+    --bg-header-2: rgba(10,10,12,0.85);
+    --accent-1:    rgba(180,185,195,0.65);
+    --accent-2:    rgba(140,140,150,0.5);
+    --accent-3:    rgba(228,228,231,0.85);
+    --border-glow: rgba(180,185,195,0.18);
+    --text-primary: rgba(245,245,247,0.94);
+    --text-muted:   rgba(195,195,200,0.55);
+    --mute-fg:      #f43f5e;
+    --mute-bg:      rgba(244,63,94,0.20);
+  }
+
+  :root { --radius: 16px; --slide-ms: 260ms; }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html, body {
+    width: 100%; height: 100%;
+    background: transparent;
+    overflow: hidden;
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ── Outer shell — provides padding and slide-anchor ── */
+  #shell {
+    width: 100%; height: 100%;
+    padding: 8px;
+    display: flex;
+    flex-direction: column;
+    /* CRITICAL: this is what makes the slide-down animation work.
+       The OS window stays put; only this inner shell moves. */
+    transform: translateY(-100%);
+    opacity: 0;
+    transition: transform var(--slide-ms) cubic-bezier(0.22, 1, 0.36, 1),
+                opacity   var(--slide-ms) cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform, opacity;
+  }
+  #shell.in {
+    transform: translateY(0);
+    opacity: 1;
+  }
+
+  /* ── Gradient border frame ── */
+  #frame {
+    flex: 1;
+    border-radius: var(--radius);
+    padding: 1.5px;
+    background: linear-gradient(
+      135deg,
+      var(--accent-1)   0%,
+      var(--accent-2)  35%,
+      var(--border-glow) 60%,
+      var(--accent-1) 100%
+    );
+    background-size: 300% 300%;
+    animation: borderShift 9s ease infinite;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 30px 60px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.25);
+  }
+  @keyframes borderShift {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+
+  /* ── Inner panel ── */
+  #panel {
+    flex: 1;
+    border-radius: calc(var(--radius) - 1.5px);
+    background: var(--bg-panel);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+    transition: background 0.25s ease;
+  }
+
+  /* ── Header ── */
+  #header {
+    height: 32px;
+    flex-shrink: 0;
+    background: linear-gradient(180deg, var(--bg-header-1) 0%, var(--bg-header-2) 100%);
+    display: flex;
+    align-items: center;
+    position: relative;
+    z-index: 20;
+    border-bottom: 1px solid var(--border-glow);
+    transition: background 0.25s ease, border-color 0.25s ease;
+  }
+  #header::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 6%; right: 6%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent,
+      var(--accent-1) 25%,
+      var(--accent-3) 50%,
+      var(--accent-1) 75%,
+      transparent);
+    opacity: 0.7;
+  }
+
+  #brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 0 12px;
+    flex-shrink: 0;
+  }
+  #brand svg     { width: 14px; height: 14px; }
+  #brand .name   { font-size: 11.5px; font-weight: 600; color: var(--text-primary); letter-spacing: 0.01em; }
+  #brand .badge  {
+    font-size: 8.5px;
+    font-weight: 600;
+    color: var(--accent-3);
+    background: var(--border-glow);
+    border: 1px solid var(--accent-1);
+    border-radius: 4px;
+    padding: 1px 5px;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+  }
+
+  #controls {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    padding: 0 10px;
+    flex-shrink: 0;
+  }
+  .win-btn {
+    width: 22px; height: 22px;
+    border-radius: 6px;
+    border: none;
+    background: transparent;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.15s ease, transform 0.1s ease, color 0.15s ease;
+    -webkit-app-region: no-drag;
+    color: var(--text-muted);
+  }
+  .win-btn:hover { background: rgba(255,255,255,0.08); color: var(--text-primary); transform: scale(1.05); }
+  .win-btn.close:hover { background: var(--mute-bg); color: var(--mute-fg); }
+  .win-btn:active { transform: scale(0.9); }
+  .win-btn svg { width: 11px; height: 11px; }
+
+  /* ── Content ── */
+  #content {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  }
+  webview {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+  }
+
+  /* ── Loader ── */
+  #loader {
+    position: absolute;
+    inset: 0;
+    background: var(--bg-panel);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 22px;
+    z-index: 50;
+    transition: opacity 0.5s ease, visibility 0.5s ease;
+  }
+  #loader.hidden { opacity: 0; visibility: hidden; }
+
+  .loader-ring { position: relative; width: 64px; height: 64px; }
+  .loader-ring::before {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 50%;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0%,
+      var(--accent-1) 60%,
+      var(--accent-3) 80%,
+      transparent 100%
+    );
+    animation: spin 1.4s linear infinite;
+  }
+  .loader-ring::after {
+    content: '';
+    position: absolute;
+    inset: 3px;
+    border-radius: 50%;
+    background: var(--bg-panel);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .loader-logo {
+    position: absolute;
+    inset: 0;
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1;
+  }
+  .loader-logo svg {
+    width: 30px; height: 30px;
+    animation: logoPulse 2s ease-in-out infinite;
+    color: var(--accent-1);
+  }
+  @keyframes logoPulse {
+    0%, 100% { filter: drop-shadow(0 0 6px var(--accent-1)); }
+    50%      { filter: drop-shadow(0 0 16px var(--accent-3)); }
+  }
+
+  .loader-text {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    animation: dotFlash 1.4s ease-in-out infinite;
+  }
+  @keyframes dotFlash {
+    0%, 100% { opacity: 0.5; }
+    50%      { opacity: 1; }
+  }
+</style>
+</head>
+<body>
+
+<div id="shell">
+  <div id="frame">
+    <div id="panel">
+
+      <div id="header">
+        <div id="brand">
+          <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="var(--accent-1)">
+            <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+          </svg>
+          <span class="name">Discord</span>
+          <span class="badge">Overlay</span>
+        </div>
+
+        <div style="flex:1"></div>
+
+        <div id="controls">
+          <button class="win-btn close" id="btn-close" title="Close panel (Esc)" data-testid="panel-close-btn">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6"  y1="6" x2="18" y2="18"/>
+            </svg>
+          </button>
+        </div>
+      </div>
+
+      <div id="content">
+
+        <div id="loader" data-testid="panel-loader">
+          <div class="loader-ring">
+            <div class="loader-logo">
+              <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" fill="currentColor">
+                <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03z"/>
+              </svg>
+            </div>
+          </div>
+          <span class="loader-text">Connecting</span>
+        </div>
+
+        <webview
+          id="wv"
+          src="https://discord.com/app"
+          useragent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"
+          partition="persist:discord"
+          allowpopups
+        ></webview>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  const shell  = document.getElementById('shell')
+  const loader = document.getElementById('loader')
+  const wv     = document.getElementById('wv')
+  const panel  = document.getElementById('panel')
+
+  // Close button → tell main to collapse
+  document.getElementById('btn-close').addEventListener('click', () => {
+    if (window.discordPanelAPI) window.discordPanelAPI.close()
+  })
+
+  // Escape closes
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape' && window.discordPanelAPI) {
+      window.discordPanelAPI.close()
+    }
+  })
+
+  // ── Webview → main IPC forwarding ────────────────────────────────────
+  wv.addEventListener('ipc-message', (event) => {
+    if (event.channel === 'muteChanged' && window.discordPanelAPI) {
+      window.discordPanelAPI.muteChanged(event.args[0])
+    }
+    if (event.channel === 'username' && window.discordPanelAPI) {
+      window.discordPanelAPI.setUsername(event.args[0])
+    }
+  })
+
+  wv.addEventListener('did-finish-load', () => {
+    setTimeout(() => loader.classList.add('hidden'), 600)
+  })
+  wv.addEventListener('did-fail-load', () => {
+    document.querySelector('.loader-text').textContent = 'Connection failed'
+  })
+
+  // ── Slide animation control (driven by main) ─────────────────────────
+  // Before the window becomes visible, ensure we're in the "out" state.
+  if (window.discordPanelAPI) {
+    window.discordPanelAPI.onPrepareShow(() => {
+      shell.classList.remove('in')
+    })
+
+    window.discordPanelAPI.onSlideIn((ms) => {
+      if (typeof ms === 'number' && ms > 0) {
+        document.documentElement.style.setProperty('--slide-ms', ms + 'ms')
+      }
+      // Next frame so the transition kicks in cleanly
+      requestAnimationFrame(() => shell.classList.add('in'))
+    })
+
+    window.discordPanelAPI.onSlideOut((ms) => {
+      if (typeof ms === 'number' && ms > 0) {
+        document.documentElement.style.setProperty('--slide-ms', ms + 'ms')
+      }
+      shell.classList.remove('in')
+    })
+
+    // ── Settings (theme + opacity) ──────────────────────────────────────
+    window.discordPanelAPI.onSettingsChanged((s) => {
+      if (!s) return
+      if (s.theme) document.documentElement.setAttribute('data-theme', s.theme)
+      if (typeof s.panelOpacity === 'number') {
+        panel.style.opacity = s.panelOpacity
+      }
+      if (typeof s.slideMs === 'number') {
+        document.documentElement.style.setProperty('--slide-ms', s.slideMs + 'ms')
+      }
+    })
+  }
+</script>
+</body>
+</html>

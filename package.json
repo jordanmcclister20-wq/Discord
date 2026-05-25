@@ -1,0 +1,54 @@
+{
+  "name": "discord-overlay",
+  "version": "2.1.0",
+  "description": "Discord drop-down desktop overlay — themable, multi-monitor safe",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron .",
+    "dist": "electron-builder --win --x64"
+  },
+  "devDependencies": {
+    "electron": "^28.2.0",
+    "electron-builder": "^24.9.1"
+  },
+  "build": {
+    "appId": "com.discord.overlay",
+    "productName": "Discord Overlay",
+    "copyright": "Copyright \u00a9 2026",
+    "directories": {
+      "output": "dist",
+      "buildResources": "assets"
+    },
+    "files": [
+      "main.js",
+      "preload.js",
+      "preload-discord.js",
+      "preload-webview.js",
+      "tab.html",
+      "discord.html",
+      "assets/icon.ico",
+      "assets/icon.png"
+    ],
+    "extraResources": [
+      {
+        "from": "assets/",
+        "to": "assets/",
+        "filter": [
+          "**/*"
+        ]
+      }
+    ],
+    "win": {
+      "icon": "assets/icon.ico",
+      "target": [
+        {
+          "target": "dir",
+          "arch": [
+            "x64"
+          ]
+        }
+      ]
+    }
+  },
+  "author": "mrrmeaty"
+}

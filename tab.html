@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html data-theme="blurple">
+<head>
+<meta charset="UTF-8">
+<title>Overlay Tab</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700&display=swap');
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Theme variables — switched by [data-theme="..."] on <html>.
+     All themes share the same variable names; only the values change.
+     ──────────────────────────────────────────────────────────────────── */
+
+  :root,
+  [data-theme="blurple"] {
+    --bg-1:        rgba(30, 25, 55, 0.97);
+    --bg-2:        rgba(22, 18, 44, 0.99);
+    --border:      rgba(88, 101, 242, 0.42);
+    --accent-1:    #5865F2;
+    --accent-2:    #946eff;
+    --hover:       rgba(88, 101, 242, 0.10);
+    --pulse:       #57f287;
+    --mute-bg:     rgba(237, 66, 69, 0.30);
+    --mute-bg-h:   rgba(237, 66, 69, 0.45);
+    --mute-fg:     #ed4245;
+    --text:        rgba(232, 235, 255, 0.92);
+    --text-dim:    rgba(200, 205, 255, 0.70);
+  }
+  [data-theme="midnight"] {
+    --bg-1:        rgba(8, 12, 24, 0.97);
+    --bg-2:        rgba(4, 7, 16, 0.99);
+    --border:      rgba(70, 130, 220, 0.50);
+    --accent-1:    #3b82f6;
+    --accent-2:    #1d4ed8;
+    --hover:       rgba(59, 130, 246, 0.12);
+    --pulse:       #38bdf8;
+    --mute-bg:     rgba(244, 63, 94, 0.30);
+    --mute-bg-h:   rgba(244, 63, 94, 0.45);
+    --mute-fg:     #f43f5e;
+    --text:        rgba(226, 232, 255, 0.93);
+    --text-dim:    rgba(180, 195, 230, 0.65);
+  }
+  [data-theme="aurora"] {
+    --bg-1:        rgba(20, 12, 40, 0.96);
+    --bg-2:        rgba(10, 6, 26, 0.99);
+    --border:      rgba(236, 72, 178, 0.50);
+    --accent-1:    #22d3ee;
+    --accent-2:    #ec4899;
+    --hover:       rgba(34, 211, 238, 0.12);
+    --pulse:       #22d3ee;
+    --mute-bg:     rgba(244, 114, 182, 0.32);
+    --mute-bg-h:   rgba(244, 114, 182, 0.48);
+    --mute-fg:     #f472b6;
+    --text:        rgba(244, 235, 255, 0.94);
+    --text-dim:    rgba(215, 200, 240, 0.68);
+  }
+  [data-theme="ember"] {
+    --bg-1:        rgba(36, 14, 8, 0.97);
+    --bg-2:        rgba(20, 8, 4, 0.99);
+    --border:      rgba(249, 115, 22, 0.50);
+    --accent-1:    #f97316;
+    --accent-2:    #facc15;
+    --hover:       rgba(249, 115, 22, 0.13);
+    --pulse:       #facc15;
+    --mute-bg:     rgba(239, 68, 68, 0.32);
+    --mute-bg-h:   rgba(239, 68, 68, 0.48);
+    --mute-fg:     #ef4444;
+    --text:        rgba(254, 240, 220, 0.94);
+    --text-dim:    rgba(230, 200, 170, 0.70);
+  }
+  [data-theme="forest"] {
+    --bg-1:        rgba(8, 22, 14, 0.97);
+    --bg-2:        rgba(4, 14, 8, 0.99);
+    --border:      rgba(34, 197, 94, 0.50);
+    --accent-1:    #10b981;
+    --accent-2:    #84cc16;
+    --hover:       rgba(16, 185, 129, 0.13);
+    --pulse:       #34d399;
+    --mute-bg:     rgba(220, 38, 38, 0.30);
+    --mute-bg-h:   rgba(220, 38, 38, 0.45);
+    --mute-fg:     #f87171;
+    --text:        rgba(230, 250, 235, 0.93);
+    --text-dim:    rgba(185, 215, 195, 0.68);
+  }
+  [data-theme="sakura"] {
+    --bg-1:        rgba(40, 18, 28, 0.97);
+    --bg-2:        rgba(22, 8, 16, 0.99);
+    --border:      rgba(244, 114, 182, 0.55);
+    --accent-1:    #f472b6;
+    --accent-2:    #fb923c;
+    --hover:       rgba(244, 114, 182, 0.13);
+    --pulse:       #fb7185;
+    --mute-bg:     rgba(220, 38, 38, 0.30);
+    --mute-bg-h:   rgba(220, 38, 38, 0.45);
+    --mute-fg:     #ef4444;
+    --text:        rgba(255, 230, 240, 0.94);
+    --text-dim:    rgba(230, 195, 215, 0.70);
+  }
+  [data-theme="cyber"] {
+    --bg-1:        rgba(2, 12, 8, 0.97);
+    --bg-2:        rgba(0, 6, 4, 0.99);
+    --border:      rgba(34, 197, 94, 0.55);
+    --accent-1:    #22ff88;
+    --accent-2:    #00ffd5;
+    --hover:       rgba(34, 255, 136, 0.13);
+    --pulse:       #22ff88;
+    --mute-bg:     rgba(255, 30, 80, 0.32);
+    --mute-bg-h:   rgba(255, 30, 80, 0.50);
+    --mute-fg:     #ff3060;
+    --text:        rgba(220, 255, 235, 0.95);
+    --text-dim:    rgba(170, 220, 195, 0.70);
+  }
+  [data-theme="mono"] {
+    --bg-1:        rgba(22, 22, 24, 0.97);
+    --bg-2:        rgba(12, 12, 14, 0.99);
+    --border:      rgba(180, 185, 195, 0.40);
+    --accent-1:    #d4d4d8;
+    --accent-2:    #a1a1aa;
+    --hover:       rgba(255, 255, 255, 0.08);
+    --pulse:       #e4e4e7;
+    --mute-bg:     rgba(244, 63, 94, 0.30);
+    --mute-bg-h:   rgba(244, 63, 94, 0.45);
+    --mute-fg:     #f43f5e;
+    --text:        rgba(245, 245, 247, 0.94);
+    --text-dim:    rgba(195, 195, 200, 0.70);
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html, body {
+    width: 100%;
+    height: 38px;
+    background: transparent;
+    overflow: visible;            /* let context menu render below */
+    font-family: 'Outfit', 'Segoe UI', sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body { position: relative; }
+
+  /* ── Tab body ─────────────────────────────────────────────────────────── */
+  #tab {
+    width: 100%; height: 38px;
+    background: linear-gradient(180deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    border-radius: 19px;
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    cursor: default;
+    -webkit-app-region: no-drag;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.25s ease, background 0.25s ease;
+  }
+
+  /* Subtle shimmer on top */
+  #tab::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 10%; right: 10%;
+    height: 1px;
+    background: linear-gradient(90deg,
+      transparent,
+      var(--accent-1) 30%,
+      var(--accent-2) 70%,
+      transparent);
+    opacity: 0.7;
+  }
+
+  /* ── Action buttons (mute, leave) ─────────────────────────────────────── */
+  .action {
+    width: 40px; height: 38px;
+    display: flex; align-items: center; justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    transition: background 0.15s ease, transform 0.08s ease;
+    position: relative;
+    z-index: 1;
+  }
+  .action:first-child { border-radius: 19px 0 0 19px; }
+  .action:last-child  { border-radius: 0 19px 19px 0; }
+  .action:active      { transform: scale(0.88); }
+  .action:hover       { background: var(--hover); }
+
+  #btn-mute.muted          { background: var(--mute-bg); }
+  #btn-mute.muted:hover    { background: var(--mute-bg-h); }
+  #btn-mute.muted .mic-on  { display: none !important; }
+  #btn-mute:not(.muted) .mic-off { display: none !important; }
+
+  #btn-leave:hover { background: var(--mute-bg); }
+  #btn-leave:hover .leave-icon { color: var(--mute-fg); }
+
+  /* ── Center "Discord" button ──────────────────────────────────────────── */
+  #btn-discord {
+    flex: 1;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    position: relative;
+    z-index: 1;
+    padding: 0 6px;
+  }
+  #btn-discord:hover  { background: var(--hover); }
+  #btn-discord:active { transform: scale(0.96); transition: transform 0.08s; }
+
+  svg.icon-discord {
+    width: 17px; height: 17px;
+    flex-shrink: 0;
+    transition: transform 0.15s ease;
+  }
+  svg.icon-discord path { transition: fill 0.2s ease; fill: var(--accent-1); }
+  #btn-discord:hover svg.icon-discord { transform: scale(1.08); }
+  #btn-discord.muted svg.icon-discord path { fill: var(--mute-fg); }
+
+  /* ── Username label ──────────────────────────────────────────────────── */
+  #username-text {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-dim);
+    max-width: 90px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-shrink: 1;
+    display: none;
+    letter-spacing: 0.01em;
+    padding-left: 1px;
+  }
+  #username-text.visible { display: block; }
+  #btn-discord.muted #username-text { color: var(--mute-fg); opacity: 0.8; }
+
+  /* ── Status pulse dot (open) ─────────────────────────────────────────── */
+  #status-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--border);
+    flex-shrink: 0;
+    transition: background 0.25s ease;
+  }
+  #btn-discord.panel-open #status-dot {
+    background: var(--pulse);
+    box-shadow: 0 0 6px var(--pulse);
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1;   transform: scale(1); }
+    50%      { opacity: 0.55; transform: scale(0.72); }
+  }
+
+  /* ── Small icons ─────────────────────────────────────────────────────── */
+  svg.icon-sm { width: 15px; height: 15px; }
+  .mic-on  { color: var(--text); }
+  .mic-off { color: var(--mute-fg); }
+  .leave-icon { color: var(--text-dim); transition: color 0.12s; }
+
+  /* ── Click spin ──────────────────────────────────────────────────────── */
+  @keyframes btn-spin {
+    0%   { transform: rotate(0)    scale(1);    filter: brightness(1); }
+    30%  { transform: rotate(200deg) scale(0.85); filter: brightness(1.35); }
+    70%  { transform: rotate(340deg) scale(1.1); filter: brightness(1.15); }
+    100% { transform: rotate(360deg) scale(1);   filter: brightness(1); }
+  }
+  .action.spinning svg,
+  #btn-discord.spinning svg.icon-discord {
+    animation: btn-spin 0.65s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+  }
+
+  /* ── Dividers ────────────────────────────────────────────────────────── */
+  .divider {
+    width: 1px;
+    height: 18px;
+    background: var(--border);
+    opacity: 0.55;
+    flex-shrink: 0;
+  }
+
+  /* ────────────────────────────────────────────────────────────────────────
+     Settings menu (right-click anywhere on the tab to open).
+     ──────────────────────────────────────────────────────────────────── */
+  #ctx-menu {
+    position: fixed;
+    top: 42px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-6px);
+    background: linear-gradient(160deg, var(--bg-1) 0%, var(--bg-2) 100%);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 8px 0;
+    display: none;
+    opacity: 0;
+    z-index: 9999;
+    width: 240px;
+    user-select: none;
+    backdrop-filter: blur(14px);
+    box-shadow: 0 14px 36px rgba(0,0,0,0.55), 0 0 0 1px rgba(0,0,0,0.4) inset;
+    transition: opacity 0.14s ease, transform 0.14s ease;
+  }
+  #ctx-menu.visible { display: block; opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  .ctx-section {
+    font-size: 9.5px;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 6px 14px 4px;
+  }
+
+  .ctx-item {
+    padding: 8px 14px;
+    font-size: 12px;
+    color: var(--text);
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background 0.1s, color 0.1s;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .ctx-item:hover        { background: var(--hover); }
+  .ctx-item.danger       { color: var(--mute-fg); }
+  .ctx-item.danger:hover { background: var(--mute-bg); }
+
+  .ctx-sep {
+    height: 1px;
+    background: var(--border);
+    opacity: 0.45;
+    margin: 6px 0;
+  }
+
+  /* Theme swatches row */
+  .swatch-row {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    padding: 4px 12px 8px;
+  }
+  .swatch {
+    height: 30px;
+    border-radius: 8px;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: transform 0.12s ease, border-color 0.12s ease;
+    position: relative;
+  }
+  .swatch:hover         { transform: translateY(-1px) scale(1.04); }
+  .swatch.active        { border-color: var(--text); }
+  .swatch.active::after {
+    content: '';
+    position: absolute;
+    inset: -3px;
+    border-radius: 11px;
+    border: 1px solid var(--text);
+    opacity: 0.4;
+  }
+
+  .swatch[data-key="blurple"]  { background: linear-gradient(135deg,#5865F2,#946eff); }
+  .swatch[data-key="midnight"] { background: linear-gradient(135deg,#3b82f6,#1d4ed8); }
+  .swatch[data-key="aurora"]   { background: linear-gradient(135deg,#22d3ee,#ec4899); }
+  .swatch[data-key="ember"]    { background: linear-gradient(135deg,#f97316,#facc15); }
+  .swatch[data-key="forest"]   { background: linear-gradient(135deg,#10b981,#84cc16); }
+  .swatch[data-key="sakura"]   { background: linear-gradient(135deg,#f472b6,#fb923c); }
+  .swatch[data-key="cyber"]    { background: linear-gradient(135deg,#22ff88,#00ffd5); }
+  .swatch[data-key="mono"]     { background: linear-gradient(135deg,#d4d4d8,#71717a); }
+
+  /* Toggle pill */
+  .ctx-toggle {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 7px 14px;
+    cursor: pointer;
+    transition: background 0.1s;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .ctx-toggle:hover { background: var(--hover); }
+  .pill {
+    width: 28px; height: 16px;
+    background: rgba(255,255,255,0.12);
+    border-radius: 8px;
+    position: relative;
+    transition: background 0.2s;
+    flex-shrink: 0;
+  }
+  .pill::after {
+    content: '';
+    position: absolute;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: #fff;
+    top: 2px; left: 2px;
+    transition: left 0.2s ease, background 0.2s ease;
+  }
+  .ctx-toggle.on .pill          { background: var(--accent-1); }
+  .ctx-toggle.on .pill::after   { left: 14px; }
+
+  /* Opacity slider */
+  .ctx-slider-row {
+    padding: 5px 14px 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    color: var(--text);
+  }
+  .ctx-slider-row label { flex: 0 0 78px; color: var(--text-dim); font-size: 11px; }
+  .ctx-slider-row input[type="range"] {
+    flex: 1;
+    accent-color: var(--accent-1);
+    height: 2px;
+  }
+  .ctx-slider-row .val { width: 30px; text-align: right; font-variant-numeric: tabular-nums; }
+
+</style>
+</head>
+<body>
+
+<div id="tab">
+
+  <!-- Mute toggle -->
+  <div class="action" id="btn-mute" title="Toggle mute" data-testid="tab-mute-btn">
+    <svg class="icon-sm mic-on" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9" y="2" width="6" height="11" rx="3" fill="currentColor"/>
+      <path d="M5 10a7 7 0 0 0 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="9"  y1="21" x2="15" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+    <svg class="icon-sm mic-off" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <rect x="9" y="2" width="6" height="11" rx="3" fill="currentColor"/>
+      <path d="M5 10a7 7 0 0 0 14 0" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="12" y1="17" x2="12" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="9"  y1="21" x2="15" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+      <line x1="3"  y1="3"  x2="21" y2="21" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Discord toggle (center) -->
+  <div id="btn-discord" title="Toggle Discord (Ctrl+Shift+D)" data-testid="tab-discord-btn">
+    <svg class="icon-discord" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
+    </svg>
+    <span id="username-text" data-testid="username-text"></span>
+    <div id="status-dot"></div>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Leave call -->
+  <div class="action" id="btn-leave" title="Leave call" data-testid="tab-leave-btn">
+    <svg class="icon-sm leave-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <path d="M3.5 8.5C5 5.5 8 3.5 12 3.5s7 2 8.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
+      <path d="M3.5 8.5L6.5 9l1 3-2.5 1.5a1 1 0 0 0-.2 1.5c.8.9 1.8 1.7 2.9 2.3a1 1 0 0 0 1.4-.4l1-2 3.5.5.5 2.5a1 1 0 0 0 1.1.8c1.3-.2 2.5-.7 3.6-1.4a1 1 0 0 0 .2-1.5l-2-2 1-3 3.5-.3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+</div>
+
+<!-- ─── Right-click settings menu ─── -->
+<div id="ctx-menu" data-testid="ctx-menu">
+
+  <div class="ctx-item" id="ctx-toggle" data-testid="ctx-toggle">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M9 12h6M12 9v6"/></svg>
+    Toggle Discord
+  </div>
+
+  <div class="ctx-sep"></div>
+
+  <div class="ctx-section">Theme</div>
+  <div class="swatch-row" id="theme-swatches">
+    <div class="swatch" data-key="blurple"  title="Blurple"  data-testid="theme-blurple"></div>
+    <div class="swatch" data-key="midnight" title="Midnight" data-testid="theme-midnight"></div>
+    <div class="swatch" data-key="aurora"   title="Aurora"   data-testid="theme-aurora"></div>
+    <div class="swatch" data-key="ember"    title="Ember"    data-testid="theme-ember"></div>
+    <div class="swatch" data-key="forest"   title="Forest"   data-testid="theme-forest"></div>
+    <div class="swatch" data-key="sakura"   title="Sakura"   data-testid="theme-sakura"></div>
+    <div class="swatch" data-key="cyber"    title="Cyber"    data-testid="theme-cyber"></div>
+    <div class="swatch" data-key="mono"     title="Mono"     data-testid="theme-mono"></div>
+  </div>
+
+  <div class="ctx-sep"></div>
+
+  <div class="ctx-section">Behavior</div>
+  <div class="ctx-toggle" id="opt-aot" data-testid="opt-aot">
+    Always on top
+    <div class="pill"></div>
+  </div>
+  <div class="ctx-toggle" id="opt-dim" data-testid="opt-dim">
+    Dim when idle
+    <div class="pill"></div>
+  </div>
+  <div class="ctx-slider-row">
+    <label for="opt-opacity">Opacity</label>
+    <input type="range" id="opt-opacity" min="0.65" max="1" step="0.01" data-testid="opt-opacity">
+    <div class="val" id="opt-opacity-val">100</div>
+  </div>
+
+  <div class="ctx-sep"></div>
+
+  <div class="ctx-item danger" id="ctx-quit" data-testid="ctx-quit">
+    <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/></svg>
+    Quit Overlay
+  </div>
+
+</div>
+
+<script>
+  // ── Element refs ────────────────────────────────────────────────────────
+  const btnDiscord   = document.getElementById('btn-discord')
+  const btnMute      = document.getElementById('btn-mute')
+  const btnLeave     = document.getElementById('btn-leave')
+  const usernameText = document.getElementById('username-text')
+  const ctxMenu      = document.getElementById('ctx-menu')
+
+  // ── Spin animation on every click ──────────────────────────────────────
+  function triggerSpin(el) {
+    el.classList.remove('spinning')
+    void el.offsetWidth  // force reflow so animation restarts cleanly
+    el.classList.add('spinning')
+    el.addEventListener('animationend', () => el.classList.remove('spinning'), { once: true })
+  }
+  ;[btnMute, btnDiscord, btnLeave].forEach(btn => {
+    btn.addEventListener('click', () => triggerSpin(btn), true)
+  })
+
+  // ── Mute state ─────────────────────────────────────────────────────────
+  let currentMuted = false
+  let hasSynced    = false
+  let muteClickPending = false
+
+  function applyMuteState(isMuted) {
+    currentMuted = !!isMuted
+    hasSynced    = true
+    muteClickPending = false
+    btnMute.classList.toggle('muted', currentMuted)
+    btnDiscord.classList.toggle('muted', currentMuted)
+  }
+
+  function applyPanelState(state) {
+    btnDiscord.classList.toggle('panel-open', state === 'open')
+  }
+
+  // ── Click handlers ─────────────────────────────────────────────────────
+  btnDiscord.addEventListener('click', () => window.electronAPI.toggle())
+
+  btnMute.addEventListener('click', () => {
+    window.electronAPI.mute()
+    // Optimistic flip: ONLY if we've already had a real sync, AND we don't
+    // already have a pending click in flight. The polling observer (500ms) will
+    // correct us if the click didn't take effect.
+    if (hasSynced && !muteClickPending) {
+      muteClickPending = true
+      const target = !currentMuted
+      currentMuted = target
+      btnMute.classList.toggle('muted', target)
+      btnDiscord.classList.toggle('muted', target)
+      // If no real confirmation arrives in 900ms, the observer will overwrite
+      // us anyway, so just clear the pending flag.
+      setTimeout(() => { muteClickPending = false }, 900)
+    }
+  })
+
+  btnLeave.addEventListener('click', () => window.electronAPI.leaveCall())
+
+  // ── IPC listeners ──────────────────────────────────────────────────────
+  window.electronAPI.onMuteState(applyMuteState)
+  window.electronAPI.onState(applyPanelState)
+
+  window.electronAPI.onUsername(name => {
+    if (!name) return
+    usernameText.textContent = name
+    usernameText.classList.add('visible')
+  })
+
+  // ── Settings + Theme handling ──────────────────────────────────────────
+  let settings = null
+
+  function applyTheme(key) {
+    document.documentElement.setAttribute('data-theme', key)
+    document.querySelectorAll('.swatch').forEach(s => {
+      s.classList.toggle('active', s.dataset.key === key)
+    })
+  }
+
+  function applySettings(s) {
+    settings = s
+    if (s.theme) applyTheme(s.theme)
+    document.getElementById('opt-aot').classList.toggle('on', !!s.alwaysOnTop)
+    document.getElementById('opt-dim').classList.toggle('on', !!s.gameDimming)
+    const op = document.getElementById('opt-opacity')
+    const ov = document.getElementById('opt-opacity-val')
+    op.value = s.panelOpacity ?? 1
+    ov.textContent = Math.round((s.panelOpacity ?? 1) * 100)
+  }
+
+  window.electronAPI.onSettingsChanged(applySettings)
+  window.electronAPI.getSettings().then(applySettings).catch(() => {})
+
+  // Theme swatch clicks
+  document.querySelectorAll('.swatch').forEach(s => {
+    s.addEventListener('click', e => {
+      e.stopPropagation()
+      const key = s.dataset.key
+      applyTheme(key)
+      window.electronAPI.updateSettings({ theme: key })
+    })
+  })
+
+  // Toggles
+  document.getElementById('opt-aot').addEventListener('click', () => {
+    const on = !settings?.alwaysOnTop
+    window.electronAPI.updateSettings({ alwaysOnTop: on })
+  })
+  document.getElementById('opt-dim').addEventListener('click', () => {
+    const on = !settings?.gameDimming
+    window.electronAPI.updateSettings({ gameDimming: on })
+  })
+  document.getElementById('opt-opacity').addEventListener('input', e => {
+    const v = parseFloat(e.target.value)
+    document.getElementById('opt-opacity-val').textContent = Math.round(v * 100)
+    window.electronAPI.updateSettings({ panelOpacity: v })
+  })
+
+  // ── Context menu open/close ────────────────────────────────────────────
+  function openCtx() { ctxMenu.classList.add('visible') }
+  function closeCtx() { ctxMenu.classList.remove('visible') }
+
+  document.getElementById('tab').addEventListener('contextmenu', e => {
+    e.preventDefault()
+    if (ctxMenu.classList.contains('visible')) closeCtx()
+    else openCtx()
+  })
+
+  document.getElementById('ctx-toggle').addEventListener('click', () => {
+    closeCtx()
+    window.electronAPI.toggle()
+  })
+
+  document.getElementById('ctx-quit').addEventListener('click', () => {
+    window.electronAPI.quit()
+  })
+
+  document.addEventListener('click', e => {
+    if (!ctxMenu.contains(e.target) &&
+        !e.target.closest('#tab')) {
+      closeCtx()
+    }
+  })
+
+  // Close on escape
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') closeCtx()
+  })
+</script>
+
+</body>
+</html>

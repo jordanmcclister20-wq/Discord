@@ -92,3 +92,13 @@ User reported that clicking the tab's mute button **unmuted** Discord, and click
 - `tab.html` — added a new **settings cog button** at the right end of the tab (after the leave button), with a hover-rotate animation. Click it to open/close the settings menu (themes, behavior toggles, opacity, quit). The cog rotates 120° when the menu is open so the state is obvious.
 - `main.js` — widened `TAB_W_BASE` from 132 → 176 to fit the 4th button; removed the dynamic-width logic that grew the tab to fit the username (username detection still runs in the background but no longer drives a resize).
 - Right-click anywhere on the tab still opens the menu as an alternative.
+
+## v2.2.1 — Settings button removed, center icon fully neutral (2026-01)
+### User feedback
+- Remove the settings cog button — open settings only on right-click.
+- Don't change the center Discord icon's color when muted either.
+
+### Changes
+- `tab.html` — removed `#btn-settings` element + divider + CSS rules + click handler. Removed `svg.icon-discord path { fill: var(--mute-fg) }` rule. Removed the `transition: fill` on the icon path since it no longer changes. Reverted ctx menu open/close to right-click-only.
+- `main.js` — reverted `TAB_W_BASE` 176 → 132 (3 buttons again).
+- Tab now: Mute | Discord | Leave. Mute state visible ONLY via the left mute button's red background. Center is 100% unchanged on mute.

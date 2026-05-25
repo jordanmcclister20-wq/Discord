@@ -61,8 +61,8 @@ function saveSettings() {
 }
 
 // ── Window sizing ────────────────────────────────────────────────────────────
-// 4 buttons (mute, discord, leave, settings) + 3 dividers + small padding.
-const TAB_W_BASE = 176
+// 3 buttons (mute, discord, leave) + 2 dividers + small padding.
+const TAB_W_BASE = 132
 const TAB_H      = 38
 
 // Username detection is still wired (for future use) but no longer affects

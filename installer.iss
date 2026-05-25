@@ -6,7 +6,7 @@
 ; ============================================================
 
 #define AppName        "Discord Overlay"
-#define AppVersion     "2.2.0"
+#define AppVersion     "2.2.1"
 #define AppPublisher   "Discord Overlay"
 #define AppId          "com.discord.overlay"
 #define AppExeName     "Discord Overlay.exe"

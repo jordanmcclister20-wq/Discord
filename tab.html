@@ -191,14 +191,6 @@
   #btn-leave:hover { background: var(--mute-bg); }
   #btn-leave:hover .leave-icon { color: var(--mute-fg); }
 
-  /* ── Settings cog button ─────────────────────────────────────────────── */
-  #btn-settings .cog-icon {
-    color: var(--text-dim);
-    transition: color 0.15s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
-  }
-  #btn-settings:hover .cog-icon { color: var(--accent-1); transform: rotate(60deg); }
-  #btn-settings.open .cog-icon  { color: var(--accent-1); transform: rotate(120deg); }
-
   /* ── Center "Discord" button ──────────────────────────────────────────── */
   #btn-discord {
     flex: 1;
@@ -215,15 +207,15 @@
   #btn-discord:hover  { background: var(--hover); }
   #btn-discord:active { transform: scale(0.96); transition: transform 0.08s; }
 
-  /* The Discord icon is the ONLY thing that recolors with mute state. */
+  /* The Discord icon stays the same color regardless of mute state —
+     mute status is only shown via the left mute button's background. */
   svg.icon-discord {
     width: 17px; height: 17px;
     flex-shrink: 0;
     transition: transform 0.15s ease;
   }
-  svg.icon-discord path { transition: fill 0.2s ease; fill: var(--accent-1); }
+  svg.icon-discord path { fill: var(--accent-1); }
   #btn-discord:hover svg.icon-discord { transform: scale(1.08); }
-  #btn-discord.muted svg.icon-discord path { fill: var(--mute-fg); }
 
   /* ── Small icons ─────────────────────────────────────────────────────── */
   svg.icon-sm { width: 15px; height: 15px; }
@@ -433,16 +425,6 @@
     </svg>
   </div>
 
-  <div class="divider"></div>
-
-  <!-- Settings (themes & options) -->
-  <div class="action" id="btn-settings" title="Settings — themes, hotkeys, options" data-testid="tab-settings-btn">
-    <svg class="icon-sm cog-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
-      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-    </svg>
-  </div>
-
 </div>
 
 <!-- ─── Right-click settings menu ─── -->
@@ -502,7 +484,6 @@
   const btnDiscord   = document.getElementById('btn-discord')
   const btnMute      = document.getElementById('btn-mute')
   const btnLeave     = document.getElementById('btn-leave')
-  const btnSettings  = document.getElementById('btn-settings')
   const ctxMenu      = document.getElementById('ctx-menu')
 
   // ── Spin animation on every click ──────────────────────────────────────
@@ -517,6 +498,8 @@
   })
 
   // ── Mute state ─────────────────────────────────────────────────────────
+  // Mute status is shown ONLY by the left mute button's red background.
+  // The center Discord button and its icon are completely unaffected.
   let currentMuted = false
   let hasSynced    = false
   let muteClickPending = false
@@ -526,14 +509,9 @@
     hasSynced    = true
     muteClickPending = false
     btnMute.classList.toggle('muted', currentMuted)
-    // Only the Discord SVG icon recolors via this class — no background tint,
-    // no scale, no other visual changes on the center button (per user request).
-    btnDiscord.classList.toggle('muted', currentMuted)
   }
 
-  function applyPanelState(_state) {
-    // No-op — the panel state used to drive a pulse dot which has been removed.
-  }
+  function applyPanelState(_state) { /* no-op — pulse dot removed */ }
 
   // ── Click handlers ─────────────────────────────────────────────────────
   btnDiscord.addEventListener('click', () => window.electronAPI.toggle())
@@ -545,7 +523,6 @@
       const target = !currentMuted
       currentMuted = target
       btnMute.classList.toggle('muted', target)
-      btnDiscord.classList.toggle('muted', target)
       setTimeout(() => { muteClickPending = false }, 900)
     }
   })
@@ -555,10 +532,7 @@
   // ── IPC listeners ──────────────────────────────────────────────────────
   window.electronAPI.onMuteState(applyMuteState)
   window.electronAPI.onState(applyPanelState)
-
-  // Username detection still runs in the background (in case we want it later),
-  // but we don't show it in the tab anymore.
-  window.electronAPI.onUsername(() => {})
+  window.electronAPI.onUsername(() => {})  // detection runs silently in the bg
 
   // ── Settings + Theme handling ──────────────────────────────────────────
   let settings = null
@@ -614,20 +588,13 @@
     window.electronAPI.updateSettings({ panelOpacity: v })
   })
 
-  // ── Context menu open/close ────────────────────────────────────────────
-  function openCtx()  { ctxMenu.classList.add('visible');    btnSettings.classList.add('open') }
-  function closeCtx() { ctxMenu.classList.remove('visible'); btnSettings.classList.remove('open') }
-  function toggleCtx(){ ctxMenu.classList.contains('visible') ? closeCtx() : openCtx() }
-
-  // Primary entry-point: the cog button. (Right-click anywhere on the tab still works.)
-  btnSettings.addEventListener('click', e => {
-    e.stopPropagation()
-    toggleCtx()
-  })
+  // ── Context menu open/close (right-click anywhere on the tab) ──────────
+  function openCtx()  { ctxMenu.classList.add('visible') }
+  function closeCtx() { ctxMenu.classList.remove('visible') }
 
   document.getElementById('tab').addEventListener('contextmenu', e => {
     e.preventDefault()
-    toggleCtx()
+    ctxMenu.classList.contains('visible') ? closeCtx() : openCtx()
   })
 
   document.getElementById('ctx-toggle').addEventListener('click', () => {

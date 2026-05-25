@@ -191,6 +191,14 @@
   #btn-leave:hover { background: var(--mute-bg); }
   #btn-leave:hover .leave-icon { color: var(--mute-fg); }
 
+  /* ── Settings cog button ─────────────────────────────────────────────── */
+  #btn-settings .cog-icon {
+    color: var(--text-dim);
+    transition: color 0.15s ease, transform 0.5s cubic-bezier(0.34,1.56,0.64,1);
+  }
+  #btn-settings:hover .cog-icon { color: var(--accent-1); transform: rotate(60deg); }
+  #btn-settings.open .cog-icon  { color: var(--accent-1); transform: rotate(120deg); }
+
   /* ── Center "Discord" button ──────────────────────────────────────────── */
   #btn-discord {
     flex: 1;
@@ -198,7 +206,6 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 7px;
     cursor: pointer;
     transition: background 0.15s ease;
     position: relative;
@@ -208,6 +215,7 @@
   #btn-discord:hover  { background: var(--hover); }
   #btn-discord:active { transform: scale(0.96); transition: transform 0.08s; }
 
+  /* The Discord icon is the ONLY thing that recolors with mute state. */
   svg.icon-discord {
     width: 17px; height: 17px;
     flex-shrink: 0;
@@ -216,41 +224,6 @@
   svg.icon-discord path { transition: fill 0.2s ease; fill: var(--accent-1); }
   #btn-discord:hover svg.icon-discord { transform: scale(1.08); }
   #btn-discord.muted svg.icon-discord path { fill: var(--mute-fg); }
-
-  /* ── Username label ──────────────────────────────────────────────────── */
-  #username-text {
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-dim);
-    max-width: 90px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    flex-shrink: 1;
-    display: none;
-    letter-spacing: 0.01em;
-    padding-left: 1px;
-  }
-  #username-text.visible { display: block; }
-  #btn-discord.muted #username-text { color: var(--mute-fg); opacity: 0.8; }
-
-  /* ── Status pulse dot (open) ─────────────────────────────────────────── */
-  #status-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--border);
-    flex-shrink: 0;
-    transition: background 0.25s ease;
-  }
-  #btn-discord.panel-open #status-dot {
-    background: var(--pulse);
-    box-shadow: 0 0 6px var(--pulse);
-    animation: pulse 1.8s ease-in-out infinite;
-  }
-  @keyframes pulse {
-    0%, 100% { opacity: 1;   transform: scale(1); }
-    50%      { opacity: 0.55; transform: scale(0.72); }
-  }
 
   /* ── Small icons ─────────────────────────────────────────────────────── */
   svg.icon-sm { width: 15px; height: 15px; }
@@ -447,8 +420,6 @@
     <svg class="icon-discord" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
       <path d="M20.317 4.37a19.791 19.791 0 0 0-4.885-1.515.074.074 0 0 0-.079.037c-.21.375-.444.864-.608 1.25a18.27 18.27 0 0 0-5.487 0 12.64 12.64 0 0 0-.617-1.25.077.077 0 0 0-.079-.037A19.736 19.736 0 0 0 3.677 4.37a.07.07 0 0 0-.032.027C.533 9.046-.32 13.58.099 18.057a.082.082 0 0 0 .031.057 19.9 19.9 0 0 0 5.993 3.03.078.078 0 0 0 .084-.028 14.09 14.09 0 0 0 1.226-1.994.076.076 0 0 0-.041-.106 13.107 13.107 0 0 1-1.872-.892.077.077 0 0 1-.008-.128 10.2 10.2 0 0 0 .372-.292.074.074 0 0 1 .077-.01c3.928 1.793 8.18 1.793 12.062 0a.074.074 0 0 1 .078.01c.12.098.246.198.373.292a.077.077 0 0 1-.006.127 12.299 12.299 0 0 1-1.873.892.077.077 0 0 0-.041.107c.36.698.772 1.362 1.225 1.993a.076.076 0 0 0 .084.028 19.839 19.839 0 0 0 6.002-3.03.077.077 0 0 0 .032-.054c.5-5.177-.838-9.674-3.549-13.66a.061.061 0 0 0-.031-.03zM8.02 15.33c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.956-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.956 2.418-2.157 2.418zm7.975 0c-1.183 0-2.157-1.085-2.157-2.419 0-1.333.955-2.419 2.157-2.419 1.21 0 2.176 1.096 2.157 2.42 0 1.333-.946 2.418-2.157 2.418z"/>
     </svg>
-    <span id="username-text" data-testid="username-text"></span>
-    <div id="status-dot"></div>
   </div>
 
   <div class="divider"></div>
@@ -459,6 +430,16 @@
       <path d="M3.5 8.5C5 5.5 8 3.5 12 3.5s7 2 8.5 5" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/>
       <path d="M3.5 8.5L6.5 9l1 3-2.5 1.5a1 1 0 0 0-.2 1.5c.8.9 1.8 1.7 2.9 2.3a1 1 0 0 0 1.4-.4l1-2 3.5.5.5 2.5a1 1 0 0 0 1.1.8c1.3-.2 2.5-.7 3.6-1.4a1 1 0 0 0 .2-1.5l-2-2 1-3 3.5-.3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
       <line x1="4" y1="20" x2="20" y2="4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+    </svg>
+  </div>
+
+  <div class="divider"></div>
+
+  <!-- Settings (themes & options) -->
+  <div class="action" id="btn-settings" title="Settings — themes, hotkeys, options" data-testid="tab-settings-btn">
+    <svg class="icon-sm cog-icon" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/>
+      <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09a1.65 1.65 0 0 0 1.51-1 1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33h0a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51h0a1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82v0a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
     </svg>
   </div>
 
@@ -521,7 +502,7 @@
   const btnDiscord   = document.getElementById('btn-discord')
   const btnMute      = document.getElementById('btn-mute')
   const btnLeave     = document.getElementById('btn-leave')
-  const usernameText = document.getElementById('username-text')
+  const btnSettings  = document.getElementById('btn-settings')
   const ctxMenu      = document.getElementById('ctx-menu')
 
   // ── Spin animation on every click ──────────────────────────────────────
@@ -545,11 +526,13 @@
     hasSynced    = true
     muteClickPending = false
     btnMute.classList.toggle('muted', currentMuted)
+    // Only the Discord SVG icon recolors via this class — no background tint,
+    // no scale, no other visual changes on the center button (per user request).
     btnDiscord.classList.toggle('muted', currentMuted)
   }
 
-  function applyPanelState(state) {
-    btnDiscord.classList.toggle('panel-open', state === 'open')
+  function applyPanelState(_state) {
+    // No-op — the panel state used to drive a pulse dot which has been removed.
   }
 
   // ── Click handlers ─────────────────────────────────────────────────────
@@ -557,17 +540,12 @@
 
   btnMute.addEventListener('click', () => {
     window.electronAPI.mute()
-    // Optimistic flip: ONLY if we've already had a real sync, AND we don't
-    // already have a pending click in flight. The polling observer (500ms) will
-    // correct us if the click didn't take effect.
     if (hasSynced && !muteClickPending) {
       muteClickPending = true
       const target = !currentMuted
       currentMuted = target
       btnMute.classList.toggle('muted', target)
       btnDiscord.classList.toggle('muted', target)
-      // If no real confirmation arrives in 900ms, the observer will overwrite
-      // us anyway, so just clear the pending flag.
       setTimeout(() => { muteClickPending = false }, 900)
     }
   })
@@ -578,11 +556,9 @@
   window.electronAPI.onMuteState(applyMuteState)
   window.electronAPI.onState(applyPanelState)
 
-  window.electronAPI.onUsername(name => {
-    if (!name) return
-    usernameText.textContent = name
-    usernameText.classList.add('visible')
-  })
+  // Username detection still runs in the background (in case we want it later),
+  // but we don't show it in the tab anymore.
+  window.electronAPI.onUsername(() => {})
 
   // ── Settings + Theme handling ──────────────────────────────────────────
   let settings = null
@@ -639,13 +615,19 @@
   })
 
   // ── Context menu open/close ────────────────────────────────────────────
-  function openCtx() { ctxMenu.classList.add('visible') }
-  function closeCtx() { ctxMenu.classList.remove('visible') }
+  function openCtx()  { ctxMenu.classList.add('visible');    btnSettings.classList.add('open') }
+  function closeCtx() { ctxMenu.classList.remove('visible'); btnSettings.classList.remove('open') }
+  function toggleCtx(){ ctxMenu.classList.contains('visible') ? closeCtx() : openCtx() }
+
+  // Primary entry-point: the cog button. (Right-click anywhere on the tab still works.)
+  btnSettings.addEventListener('click', e => {
+    e.stopPropagation()
+    toggleCtx()
+  })
 
   document.getElementById('tab').addEventListener('contextmenu', e => {
     e.preventDefault()
-    if (ctxMenu.classList.contains('visible')) closeCtx()
-    else openCtx()
+    toggleCtx()
   })
 
   document.getElementById('ctx-toggle').addEventListener('click', () => {

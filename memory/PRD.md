@@ -78,3 +78,17 @@ User reported that clicking the tab's mute button **unmuted** Discord, and click
 2. `main.js` — added `invertMute` setting (default false); when toggled, re-emits the current mute state with the new interpretation so the tab updates instantly.
 3. `tab.html` — added "Invert mute state" toggle in the right-click settings menu as an escape hatch.
 4. `preload-webview.js` — added `window.__overlayMuteDebug()` and `window.__overlayDebug = true` diagnostic hooks (paste into the panel devtools to inspect what the detector is reading).
+
+## v2.2.0 — Cleaner tab + discoverable settings (2026-01)
+### User feedback
+- Center bar should NOT change colors with mute — only the Discord icon should.
+- Remove the username text from the tab center.
+- Remove the "little glow button" (the pulsing status dot).
+- "i have no clue how to adjust the themes or anything" — the right-click-only context menu wasn't discoverable.
+
+### Changes
+- `tab.html` — removed the `#username-text` and `#status-dot` elements. Removed all `.muted` CSS rules that affected `#btn-discord`'s background or username color. Only `#btn-discord.muted svg.icon-discord path { fill: var(--mute-fg); }` remains, so only the Discord icon recolors.
+- `tab.html` — removed `panel-open` pulse handling.
+- `tab.html` — added a new **settings cog button** at the right end of the tab (after the leave button), with a hover-rotate animation. Click it to open/close the settings menu (themes, behavior toggles, opacity, quit). The cog rotates 120° when the menu is open so the state is obvious.
+- `main.js` — widened `TAB_W_BASE` from 132 → 176 to fit the 4th button; removed the dynamic-width logic that grew the tab to fit the username (username detection still runs in the background but no longer drives a resize).
+- Right-click anywhere on the tab still opens the menu as an alternative.

@@ -61,14 +61,13 @@ function saveSettings() {
 }
 
 // ── Window sizing ────────────────────────────────────────────────────────────
-const TAB_W_BASE = 132
+// 4 buttons (mute, discord, leave, settings) + 3 dividers + small padding.
+const TAB_W_BASE = 176
 const TAB_H      = 38
 
-function currentTabW() {
-  if (!lastUsername) return TAB_W_BASE
-  const extra = Math.max(34, Math.min(90, Math.ceil(lastUsername.length * 7)))
-  return TAB_W_BASE + extra
-}
+// Username detection is still wired (for future use) but no longer affects
+// the tab width — the username is no longer displayed on the tab.
+function currentTabW() { return TAB_W_BASE }
 
 function primary() { return screen.getPrimaryDisplay() }
 
@@ -271,16 +270,12 @@ ipcMain.on('muteChanged', (_e, isMuted) => {
   }
 })
 
-// Username
+// Username (still tracked but no longer resizes the tab)
 ipcMain.on('setUsername', (_e, name) => {
   if (!name || typeof name !== 'string' || name === lastUsername) return
   lastUsername = name
-  const newW = currentTabW()
   if (tabWin && !tabWin.isDestroyed()) {
     tabWin.webContents.send('username', name)
-    tabWin.setSize(newW, TAB_H)
-    const tp = tabPos(newW)
-    tabWin.setPosition(tp.x, tp.y)
   }
 })
 

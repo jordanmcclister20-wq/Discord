@@ -39,6 +39,7 @@ const DEFAULT_SETTINGS = {
   gameDimming:     true,    // dim tab when overlay loses focus
   hotkeyToggle:    'Control+Shift+D',
   hotkeyMute:      'Control+Shift+M',
+  invertMute:      false,   // escape hatch if Discord changes selectors again
 }
 
 let settings = { ...DEFAULT_SETTINGS }
@@ -262,7 +263,8 @@ ipcMain.on('leaveCall', () => {
 
 // Mute state pushed up from preload-webview.js
 ipcMain.on('muteChanged', (_e, isMuted) => {
-  lastMuteState   = !!isMuted
+  const m = !!isMuted
+  lastMuteState   = settings.invertMute ? !m : m
   muteStateSynced = true
   if (tabWin && !tabWin.isDestroyed()) {
     tabWin.webContents.send('muteState', lastMuteState)
@@ -286,6 +288,7 @@ ipcMain.on('setUsername', (_e, name) => {
 ipcMain.handle('settings:get', () => settings)
 
 ipcMain.on('settings:update', (_e, patch) => {
+  const prevInvert = settings.invertMute
   settings = { ...settings, ...patch }
   saveSettings()
   // Broadcast to both renderers
@@ -294,6 +297,13 @@ ipcMain.on('settings:update', (_e, patch) => {
   }
   if (discordWin && !discordWin.isDestroyed()) {
     discordWin.webContents.send('settings:changed', settings)
+  }
+  // If invertMute changed, re-apply current mute reading with new interpretation
+  if (muteStateSynced && prevInvert !== settings.invertMute) {
+    lastMuteState = !lastMuteState
+    if (tabWin && !tabWin.isDestroyed()) {
+      tabWin.webContents.send('muteState', lastMuteState)
+    }
   }
   // Re-pin if alwaysOnTop changed
   pin(tabWin)

@@ -3,12 +3,17 @@
 // Detects mute state and username and pushes them up to discord.html via
 // sendToHost, where they are forwarded to the main process.
 //
-// Stricter selectors than the previous version:
-//   • The self-mute button is matched ONLY inside a user-area / panels container
-//   • aria-label must EXACTLY equal "Mute" or "Unmute" (optionally with a
-//     " (M)" / " (Ctrl+Shift+M)" shortcut suffix). This rejects
-//     "Mute conversation", "Mute notifications", "Mute server", "Mute role", etc.
-//   • aria-pressed is preferred when present; otherwise we use the label
+// Bug fix v2.1.1 — mute detection was inverted:
+//   • Previously trusted aria-pressed first. Discord appears to use
+//     aria-pressed="true" to mean "the mic toggle is in the ON position"
+//     (i.e. mic active, NOT muted) — the opposite of what we assumed.
+//   • Now we trust the aria-LABEL first. ARIA convention says the label
+//     describes the action the button will perform when clicked:
+//         "Mute"   → clicking mutes  → currently UNMUTED
+//         "Unmute" → clicking unmutes → currently MUTED
+//     aria-pressed is only used as a last-resort tiebreaker.
+//   • A diagnostic mode (window.__overlayDebug = true) prints what we're
+//     reading so future selector breakage is easy to spot.
 
 const { ipcRenderer } = require('electron')
 
@@ -32,6 +37,7 @@ function getUserPanels() {
 }
 
 function findSelfMuteButton() {
+  // First, look inside the user-area panel (most reliable scope)
   for (const p of getUserPanels()) {
     const buttons = p.querySelectorAll('button[aria-label]')
     for (const b of buttons) {
@@ -39,8 +45,7 @@ function findSelfMuteButton() {
       if (lbl && MUTE_LABEL_RE.test(lbl)) return b
     }
   }
-  // Last resort: any exact-match Mute/Unmute on page (avoids the loose
-  // contains() check that previously matched the wrong buttons).
+  // Fallback: very strict global search (exact "Mute"/"Unmute" only)
   for (const b of document.querySelectorAll('button[aria-label]')) {
     const lbl = b.getAttribute('aria-label')
     if (lbl && MUTE_LABEL_RE.test(lbl)) return b
@@ -48,29 +53,72 @@ function findSelfMuteButton() {
   return null
 }
 
+// ── Mute state detection ──────────────────────────────────────────────────────
+//
+// Returns true (muted), false (unmuted), or null (unknown).
+//
+//   PRIMARY signal: aria-label
+//     "Mute"   → clicking will mute   → currently UNMUTED → false
+//     "Unmute" → clicking will unmute → currently MUTED   → true
+//
+//   FALLBACK: aria-pressed (only if label doesn't clearly indicate state).
+//     Note Discord's aria-pressed appears inverted from spec — we treat
+//     aria-pressed="true" as UNMUTED (mic toggle in ON position).
 function getMuteState() {
   const btn = findSelfMuteButton()
   if (!btn) return null
 
-  // Prefer aria-pressed when available — Discord sets it on toggle buttons.
+  const lbl = (btn.getAttribute('aria-label') || '').trim().toLowerCase()
+
+  // Primary signal: label.
+  // We split on the first word because Discord sometimes appends " (M)"
+  // or " (Ctrl+Shift+M)" to indicate the keyboard shortcut.
+  const firstWord = lbl.split(/[\s(]/)[0]
+  if (firstWord === 'unmute') return true   // action = unmute → currently muted
+  if (firstWord === 'mute')   return false  // action = mute   → currently unmuted
+
+  // Fallback: aria-pressed.
+  // Empirically Discord uses aria-pressed="true" to mean "mic on" (unmuted),
+  // so we INVERT here vs. the prior version.
   if (btn.hasAttribute('aria-pressed')) {
-    return btn.getAttribute('aria-pressed') === 'true'
+    return btn.getAttribute('aria-pressed') !== 'true'
   }
-  // Otherwise infer from label: "Unmute" means currently muted.
-  const lbl = btn.getAttribute('aria-label').trim().toLowerCase()
-  return lbl.startsWith('unmute')
+
+  return null
 }
+
+function debugSnapshot() {
+  const btn = findSelfMuteButton()
+  if (!btn) {
+    return { found: false }
+  }
+  const svg = btn.querySelector('svg')
+  return {
+    found: true,
+    ariaLabel:   btn.getAttribute('aria-label'),
+    ariaPressed: btn.getAttribute('aria-pressed'),
+    ariaChecked: btn.getAttribute('aria-checked'),
+    svgPaths:    svg ? svg.querySelectorAll('path').length : 0,
+    svgLines:    svg ? svg.querySelectorAll('line').length : 0,
+    computedMute: getMuteState()
+  }
+}
+// Expose so the user can paste `window.__overlayMuteDebug()` in the panel's
+// devtools to see exactly what the detector is reading.
+window.__overlayMuteDebug = debugSnapshot
 
 function sendMuteIfChanged() {
   const s = getMuteState()
   if (s !== null && s !== lastSentMute) {
     lastSentMute = s
     try { ipcRenderer.sendToHost('muteChanged', s) } catch (_) {}
+    if (window.__overlayDebug) {
+      try { console.log('[overlay] mute →', s, debugSnapshot()) } catch (_) {}
+    }
   }
 }
 
 // ── Username detection ────────────────────────────────────────────────────────
-// Returns the Discord USERNAME (not the display name).
 function looksLikeUsername(text) {
   return typeof text === 'string' && /^[a-z0-9_.]{2,32}$/.test(text)
 }
@@ -78,7 +126,6 @@ function looksLikeUsername(text) {
 function getUsername() {
   try {
     for (const panel of getUserPanels()) {
-      // Try the dedicated handle elements first
       const handles = [
         '[class*="usernameInner"]',
         '[class*="panelSubtext"]',
@@ -92,7 +139,6 @@ function getUsername() {
           if (looksLikeUsername(text)) return text
         }
       }
-      // Pass 2: any short text node in the panel matching the username pattern
       const cands = Array.from(panel.querySelectorAll('[class]'))
         .map(el => (el.firstChild?.nodeType === 3
           ? el.firstChild.textContent
@@ -147,6 +193,5 @@ if (document.readyState === 'loading') {
   startObserving()
 }
 
-// Periodic safety polls in case the MutationObserver misses something
 setInterval(sendMuteIfChanged,     500)
 setInterval(sendUsernameIfChanged, 8000)

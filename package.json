@@ -1,6 +1,6 @@
 {
   "name": "discord-overlay",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Discord drop-down desktop overlay — themable, multi-monitor safe",
   "main": "main.js",
   "scripts": {

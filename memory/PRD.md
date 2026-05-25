@@ -65,3 +65,16 @@ A power user who wants a non-intrusive, themeable Discord that hides on top of g
 - Compact / mini mode (icon-only tab, no username).
 - Per-theme audio cue (open/close click sound).
 - macOS / Linux builds (currently Windows-only via electron-builder).
+
+## v2.1.1 — Inverted-mute hotfix (2026-01)
+### Bug
+User reported that clicking the tab's mute button **unmuted** Discord, and clicking it to unmute **muted** Discord. Screenshot showed the tab displaying "muted" (red icon) while Discord's actual state was unmuted — the detection was reading Discord's state inversely.
+
+### Root cause
+`preload-webview.js` preferred `aria-pressed` over `aria-label` when reading Discord's self-mute button. Empirically Discord uses `aria-pressed="true"` to mean "mic toggle is in the ON position" (mic active = unmuted), which is the opposite of the ARIA spec assumption the code made.
+
+### Fix
+1. `preload-webview.js` — `getMuteState()` now trusts `aria-label` first ("Mute" → unmuted, "Unmute" → muted). `aria-pressed` is only used as a last-resort tiebreaker and is now read inverted.
+2. `main.js` — added `invertMute` setting (default false); when toggled, re-emits the current mute state with the new interpretation so the tab updates instantly.
+3. `tab.html` — added "Invert mute state" toggle in the right-click settings menu as an escape hatch.
+4. `preload-webview.js` — added `window.__overlayMuteDebug()` and `window.__overlayDebug = true` diagnostic hooks (paste into the panel devtools to inspect what the detector is reading).

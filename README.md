@@ -1,39 +1,6 @@
-# Discord Overlay v2.2.1
+# Discord Overlay v2.1.0
 
-A premium drop-down Discord desktop overlay built with Electron — sits in a small tab at the top of your screen and slides Discord in/out on demand.
-
-## What's new in v2.2.1
-
-### Premium Visual Enhancements
-- **Glassmorphism design**: Both tab and panel feature translucent backgrounds with backdrop blur, subtle reflections, and layered shadows
-- **Animated gradient borders**: Live gradient animations on the panel frame that shift colors smoothly
-- **Shimmer effects**: Top-edge shimmer lines that animate on both tab and panel
-- **Enhanced hover states**: Buttons lift slightly on hover with smoother transitions
-
-### Micro-Interactions
-- **Ripple effect**: Click ripple animation on all action buttons (mute, leave)
-- **Icon animations**: Discord icon rotates and scales on hover with glow effect
-- **Mic pulse**: Active mic icon has a subtle breathing animation
-- **Divider animations**: Dividers grow taller and brighter on tab hover
-- **Button press**: Enhanced press animations with scale transforms
-
-### Improved Transitions
-- **Elastic slide-in**: Panel slides in with an elastic bounce effect (cubic-bezier with overshoot)
-- **Smooth fade**: Opacity fades timed independently for fluid movement
-- **Enhanced loading**: Larger loader ring with smoother conic gradient animation
-- **Error states**: Connection failures show a shake animation and clearer error styling
-
-### Accessibility
-- **Focus states**: Clear focus outlines on all interactive elements
-- **Keyboard navigation**: Proper focus-visible states with enhanced visibility
-- **Tooltips**: Smooth tooltip animations with 0.4s delay, fade-in, and backdrop blur
-- **Better contrast**: Improved text color contrast across all 8 themes
-
-### Loader Improvements
-- Larger loader ring (80px)
-- Enhanced conic gradient with 3-color transition
-- Pulsing logo with shadow expansion
-- Bouncing text animation
+A drop-down Discord desktop overlay built with Electron — sits in a small tab at the top of your screen and slides Discord in/out on demand.
 
 ## What's new in 2.1.0
 
@@ -77,7 +44,7 @@ yarn dist         # produces dist\win-unpacked\
 build.bat         # also compiles the Inno Setup installer (requires Inno Setup 6)
 ```
 
-The installer lands in `dist\installer\DiscordOverlay-Setup-2.2.1.exe`.
+The installer lands in `dist\installer\DiscordOverlay-Setup-2.1.0.exe`.
 
 ## Files
 
